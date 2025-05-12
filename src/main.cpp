@@ -1,18 +1,32 @@
 #include <Arduino.h>
 
-// put function declarations here:
-int myFunction(int, int);
+// 配置 PWM 输出
+const int pwmPin = 18; // PWM 输出引脚
+const int pwmChannel = 0;
+const int pwmFreq = 20000;    // 频率 1kHz
+const int pwmResolution = 8; // 8位分辨率 → 占空比范围0~255
+const int pwmDuty = 127;     // 占空比50%
 
-void setup() {
-  // put your setup code here, to run once:
-  int result = myFunction(2, 3);
+// ADC输入引脚
+const int adcPin = 34;
+const int sampleCount = 100;
+int samples[sampleCount];
+
+void setup()
+{
+  Serial.begin(115200);
+  delay(500); // 等一会串口准备好
+
+  // 初始化 PWM
+  ledcSetup(pwmChannel, pwmFreq, pwmResolution);
+  ledcAttachPin(pwmPin, pwmChannel);
+  ledcWrite(pwmChannel, pwmDuty); // 输出占空比
+
+  // 打印提示
+  Serial.println("开始PWM输出 + ADC采样");
 }
 
-void loop() {
-  // put your main code here, to run repeatedly:
-}
+void loop()
+{
 
-// put function definitions here:
-int myFunction(int x, int y) {
-  return x + y;
 }
