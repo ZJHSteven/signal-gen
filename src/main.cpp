@@ -1,16 +1,13 @@
 #include <Arduino.h>
+#include <state.h>
 
 // 配置 PWM 输出
 const int pwmPin = 18; // PWM 输出引脚
 const int pwmChannel = 0;
-const int pwmFreq = 20000;    // 频率 1kHz
+const int pwmFreq = systemState.pwmFreq;    // 频率 1kHz
 const int pwmResolution = 8; // 8位分辨率 → 占空比范围0~255
-const int pwmDuty = 127;     // 占空比50%
+const int pwmDuty = systemState.pwmDuty;     // 占空比50%
 
-// ADC输入引脚
-const int adcPin = 34;
-const int sampleCount = 100;
-int samples[sampleCount];
 
 void setup()
 {
