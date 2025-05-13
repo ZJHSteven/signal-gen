@@ -1,7 +1,7 @@
 #include "pwm.h"
 
 // 配置 PWM 输出的相关参数
-const int pwmPin = 18; // PWM 输出引脚
+const int pwmPin = 19; // PWM 输出引脚
 const int pwmChannel = 0; // 使用的PWM通道
 const int pwmFreq = 1000;    // 频率 1kHz
 const int pwmResolution = 8; // 8位分辨率 → 占空比范围0~255
