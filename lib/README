@@ -1,11 +1,10 @@
+这个目录是为项目特定（私有）库设计的。
+PlatformIO 会将它们编译为静态库并链接到可执行文件中。
 
-This directory is intended for project specific (private) libraries.
-PlatformIO will compile them to static libraries and link into the executable file.
+每个库的源代码应放置在一个单独的目录中
+("lib/your_library_name/[Code]")。
 
-The source code of each library should be placed in a separate directory
-("lib/your_library_name/[Code]").
-
-For example, see the structure of the following example libraries `Foo` and `Bar`:
+例如，参见以下示例库 `Foo` 和 `Bar` 的结构：
 
 |--lib
 |  |
@@ -15,19 +14,19 @@ For example, see the structure of the following example libraries `Foo` and `Bar
 |  |  |--src
 |  |     |- Bar.c
 |  |     |- Bar.h
-|  |  |- library.json (optional. for custom build options, etc) https://docs.platformio.org/page/librarymanager/config.html
+|  |  |- library.json (可选，用于自定义构建选项等) https://docs.platformio.org/page/librarymanager/config.html
 |  |
 |  |--Foo
 |  |  |- Foo.c
 |  |  |- Foo.h
 |  |
-|  |- README --> THIS FILE
+|  |- README --> 本文件
 |
 |- platformio.ini
 |--src
    |- main.c
 
-Example contents of `src/main.c` using Foo and Bar:
+`src/main.c` 使用 Foo 和 Bar 的示例内容：
 ```
 #include <Foo.h>
 #include <Bar.h>
@@ -39,8 +38,7 @@ int main (void)
 
 ```
 
-The PlatformIO Library Dependency Finder will find automatically dependent
-libraries by scanning project source files.
+PlatformIO 库依赖查找器将通过扫描项目源文件自动找到依赖库。
 
-More information about PlatformIO Library Dependency Finder
+有关 PlatformIO 库依赖查找器的更多信息
 - https://docs.platformio.org/page/librarymanager/ldf.html

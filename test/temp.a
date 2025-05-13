@@ -1,0 +1,57 @@
+#include <SPI.h>
+#include <AD9833.h>
+
+// AD9833 构造函数，参数为 FNC 引脚和参考频率（默认为 25000000UL）
+AD9833 ( uint8_t FNCpin, uint32_t referenceFrequency = 25000000UL );
+
+// 必须在创建 AD9833 对象后调用的第一个命令
+void Begin ( void );
+
+// Reset() 和 EnableOutput(false) 的区别在于：
+// EnableOutput(false) 会将 AD9833 保持在 RESET 状态，直到你通过 EnableOutput(true) 明确移除 RESET 状态。
+// 调用 Reset() 后，任何后续对其他函数的调用（除了 Reset 本身和 Set/IncrementPhase）都会移除 RESET 状态。
+void Reset ( void );
+	
+// 设置并应用信号。注意，任何对 EnableOut、SleepMode、DisableDAC 或 DisableInternalClock 的调用仍然有效
+void ApplySignal ( WaveformType waveType, Registers freqReg, float frequencyInHz,
+		Registers phaseReg = SAME_AS_REG0, float phaseInDeg = 0.0  );
+
+// 仅更新 REG0 或 REG1 中的频率
+void SetFrequency ( Registers freqReg, float frequency );
+
+// 将选定的频率寄存器增加 freqIncHz
+void IncrementFrequency ( Registers freqReg, float freqIncHz );
+
+// 仅更新 REG0 或 REG1 中的相位
+void SetPhase ( Registers phaseReg, float phaseInDeg );
+
+// 将选定的相位寄存器增加 phaseIncDeg
+void IncrementPhase ( Registers phaseReg, float phaseIncDeg );
+
+// 设置选定频率寄存器的输出波形
+// SINE_WAVE, TRIANGLE_WAVE, SQUARE_WAVE, HALF_SQUARE_WAVE,
+void SetWaveform ( Registers waveFormReg, WaveformType waveType );
+
+// 根据 REG0 或 REG1 的内容输出
+void SetOutputSource ( Registers freqReg, Registers phaseReg = SAME_AS_REG0 );
+
+// 使用 RESET 命令打开/关闭输出
+void EnableOutput ( bool enable );
+
+// 启用/禁用睡眠模式。内部时钟和 DAC 禁用
+void SleepMode ( bool enable );
+
+// 启用/禁用 DAC
+void EnableDAC ( bool enable );
+
+// 启用/禁用内部时钟
+void EnableInternalClock ( bool enable );
+
+// 返回寄存器中实际编程的频率 
+float GetActualProgrammedFrequency ( Registers reg );
+
+// 返回寄存器中实际编程的相位
+float GetActualProgrammedPhase ( Registers reg );
+
+// 返回频率分辨率 
+float GetResolution ( void );
