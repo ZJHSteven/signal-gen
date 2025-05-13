@@ -13,7 +13,7 @@ MCP41010 pot(CS_POT, 255, 255);
 void initAD9833()
 {
     SPI.begin();  // 注意：必须先初始化 SPI
-    pot.begin(128); // 将电位器初始化为最大值（最大增益）
+    pot.begin(systemState.potentiometer); // 将电位器初始化为最大值（最大增益）
     gen.Begin();
     gen.ApplySignal(SINE_WAVE, REG0, systemState.sineFreq);
     gen.EnableOutput(true);
@@ -25,6 +25,11 @@ void updateAD9833()
     {
         gen.SetFrequency(REG0, systemState.sineFreq);
         lastState.sineFreq = systemState.sineFreq;
+    }
+    if (systemState.potentiometer != lastState.potentiometer)
+    {
+        pot.setValue(systemState.potentiometer);
+        lastState.potentiometer = systemState.potentiometer;
     }
 }
 
