@@ -13,3 +13,4 @@ void initPWM() {
     ledcAttachPin(pwmPin, pwmChannel);             // 将PWM通道绑定到指定引脚
     ledcWrite(pwmChannel, pwmDuty);                // 设置PWM占空比，开始输出
 }
+
