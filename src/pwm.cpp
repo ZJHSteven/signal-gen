@@ -16,7 +16,7 @@ void initPWM() {
 }
 
 // 更新 PWM 参数
-void updatePWMWithCheck()
+void updatePWM()
 {
     // 更新 PWM 频率（仅在频率发生变化时更新）
     if (systemState.pwmFreq != lastState.pwmFreq)

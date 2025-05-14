@@ -4,8 +4,6 @@
 #include "my_ad9833.h"
 #include "http.h"
 
-WebServer server(80);
-
 void setup()
 {
   Serial.begin(115200);
@@ -14,7 +12,7 @@ void setup()
   // 初始化状态
   initState();
   // 初始化 HTTP 服务器
-  initHttpControl(server);
+  initHttpControl();
   
   // 初始化 PWM
   initPWM();

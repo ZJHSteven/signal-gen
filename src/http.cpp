@@ -2,82 +2,102 @@
 #include "http.h"
 #include <ArduinoJson.h>
 #include "state.h" // 访问 systemState 和 lastState
+#include <WiFi.h>
 
-static WebServer *webServerRef = nullptr;
+WebServer server(80); // 创建 WebServer 实例
 
+const char *ssid = "MagicBook";
+const char *password = "520520520";
 
 // ==== CORS 处理 ====
 void setCORSHeaders() {
-    webServerRef->sendHeader("Access-Control-Allow-Origin", "*");
-    webServerRef->sendHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS");
-    webServerRef->sendHeader("Access-Control-Allow-Headers", "Content-Type");
+    server.sendHeader("Access-Control-Allow-Origin", "*");
+    server.sendHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS");
+    server.sendHeader("Access-Control-Allow-Headers", "Content-Type");
 }
 
 // ==== 处理POST请求 ====
 void handleControlPost() {
     setCORSHeaders();
 
-    if (!webServerRef->hasArg("plain")) {
-        webServerRef->send(400, "application/json", "{\"error\":\"No body received\"}");
+    if (!server.hasArg("plain")) {
+        server.send(400, "application/json", "{\"error\":\"No body received\"}");
         return;
     }
 
-    String body = webServerRef->arg("plain");
+    String body = server.arg("plain");
     StaticJsonDocument<256> doc;
     DeserializationError error = deserializeJson(doc, body);
 
     if (error) {
-        webServerRef->send(400, "application/json", "{\"error\":\"Invalid JSON\"}");
+        server.send(400, "application/json", "{\"error\":\"Invalid JSON\"}");
         return;
     }
 
     // 简单字段映射（字段名可后续替换）
-    if (doc.containsKey("frequency"))
-    {
-        if (systemState.waveType == "sine")
-        {
-            systemState.sineFreq = doc["frequency"];
-        }
-        else if (systemState.waveType == "pulse")
-        {
-            systemState.pwmFreq = doc["frequency"];
-        }
-    }
-    if (doc.containsKey("amplitude"))
-    {
-        if (systemState.waveType == "sine")
-        {
-            systemState.potentiometer = doc["amplitude"];
-        }
-        else if (systemState.waveType == "pulse")
-        {
-            systemState.pwmAmplitude = doc["amplitude"];
-        }
-    }
-    if (doc.containsKey("duty"))
-    {
-        // 前端传递的是百分比值（1% 到 98%）
-        int dutyPercent = doc["duty"];
-        // 将百分比值映射到 0 到 255 的范围
-        systemState.pwmDuty = map(dutyPercent, 0, 100, 0, 255);
-    }
     if (doc.containsKey("waveType"))
     {
-        systemState.waveType = String((const char *)doc["waveType"]);
+        String waveType = String((const char *)doc["waveType"]); // 从前端获取 waveType
+
+        if (doc.containsKey("frequency"))
+        {
+            if (waveType == "sine")
+            {
+                systemState.sineFreq = doc["frequency"];
+            }
+            else if (waveType == "pulse")
+            {
+                systemState.pwmFreq = doc["frequency"];
+            }
+        }
+        if (doc.containsKey("amplitude"))
+        {
+            if (waveType == "sine")
+            {
+                systemState.potentiometer = doc["amplitude"];
+            }
+            else if (waveType == "pulse")
+            {
+                systemState.pwmAmplitude = doc["amplitude"];
+            }
+        }
+        if (doc.containsKey("duty"))
+        {
+            // 前端传递的是百分比值（1% 到 98%）
+            int dutyPercent = doc["duty"];
+            // 将百分比值映射到 0 到 255 的范围
+            systemState.pwmDuty = map(dutyPercent, 0, 100, 0, 255);
+        }
+
     }
 
-    webServerRef->send(200, "application/json", "{\"status\":\"ok\"}");
+    server.send(200, "application/json", "{\"status\":\"ok\"}");
 }
 
 // ==== OPTIONS 预检 ====
 void handleOptions() {
     setCORSHeaders();
-    webServerRef->send(204); // No Content
+    server.send(204); // No Content
 }
 
 // ==== 初始化 HTTP Server ====
-void initHttpControl(WebServer &server) {
-    webServerRef = &server;
+void initHttpControl() {
+    // 启动 Wi-Fi 连接
+    WiFi.begin(ssid, password);
+
+    // 等待 Wi-Fi 连接成功
+    while (WiFi.status() != WL_CONNECTED)
+    {
+        delay(500);
+        Serial.print("."); // 输出连接进度
+    }
+
+    Serial.println("");
+    Serial.println("WiFi connected");
+
+    // 打印获得的 IP 地址
+    Serial.println("IP Address: " + WiFi.localIP().toString());
+
 
     server.on("/control", HTTP_OPTIONS, handleOptions);
     server.on("/control", HTTP_POST, handleControlPost);
@@ -86,5 +106,5 @@ void initHttpControl(WebServer &server) {
 
 // ==== 主循环处理 ====
 void handleHttpClient() {
-    if (webServerRef) webServerRef->handleClient();
+    server.handleClient();
 }
