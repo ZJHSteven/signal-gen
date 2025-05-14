@@ -56,7 +56,10 @@ void handleControlPost() {
     }
     if (doc.containsKey("duty"))
     {
-        systemState.pwmDuty = doc["duty"];
+        // 前端传递的是百分比值（1% 到 98%）
+        int dutyPercent = doc["duty"];
+        // 将百分比值映射到 0 到 255 的范围
+        systemState.pwmDuty = map(dutyPercent, 0, 100, 0, 255);
     }
     if (doc.containsKey("waveType"))
     {
