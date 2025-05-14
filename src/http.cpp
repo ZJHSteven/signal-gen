@@ -6,8 +6,8 @@
 
 WebServer server(80); // 创建 WebServer 实例
 
-const char *ssid = "MagicBook";
-const char *password = "520520520";
+const char *ssid = "Abs";
+const char *password = "135792468";
 
 // ==== CORS 处理 ====
 void setCORSHeaders() {
