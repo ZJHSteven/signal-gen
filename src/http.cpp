@@ -54,7 +54,10 @@ void handleControlPost() {
         {
             if (waveType == "sine")
             {
-                systemState.potentiometer = doc["amplitude"];
+                // x 是输入的电压值（前端传递的 amplitude）
+                float x = doc["amplitude"];
+                // 电阻档位置 = - (2/3) * 256 * x + 256
+                systemState.potentiometer = static_cast<int>(-(256.0f / 3.0f) * x + 256.0f);
             }
             else if (waveType == "pulse")
             {
