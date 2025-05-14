@@ -47,7 +47,7 @@ void handleControlPost() {
     {
         if (systemState.waveType == "sine")
         {
-            systemState.sineAmplitude = doc["amplitude"];
+            systemState.potentiometer = doc["amplitude"];
         }
         else if (systemState.waveType == "pulse")
         {
